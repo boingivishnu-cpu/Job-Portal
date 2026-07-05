@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="hero-section reveal">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="status-pill mb-3"><span>⚡</span> Jobs and internships, all in one place</div>
+            <h1 class="hero-title mb-3">Discover your next opportunity faster</h1>
+            <p class="hero-copy mb-4">Search internships and jobs in seconds, apply instantly, and keep everything organized from a clean modern dashboard.</p>
+
+            <form method="GET" action="/search" class="search-shell mb-4">
+                <div class="search-input-group">
+                    <span class="search-icon">🔎</span>
+                    <input type="text" name="q" class="form-control search-box" placeholder="Search internships or jobs" value="">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <div class="d-flex flex-wrap gap-2">
+                <span class="job-badge">Internships</span>
+                <span class="job-badge">Full-time roles</span>
+                <span class="job-badge">Remote friendly</span>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="hero-visual reveal">
+                <div>
+                    <div class="status-pill mb-3">🌐 Live hiring</div>
+                    <h3 class="fw-bold mb-3">A polished portal for students and professionals</h3>
+                    <p class="mb-0 opacity-75">From posting opportunities to tracking your progress, every step feels smooth and effortless.</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <small class="opacity-75">Active openings</small>
+                        <div class="fs-3 fw-bold">{{ jobs|length }}</div>
+                    </div>
+                    <div>
+                        <small class="opacity-75">Apply anytime</small>
+                        <div class="fs-3 fw-bold">24/7</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-3 mb-5 reveal">
+    <div class="col-md-4">
+        <div class="feature-card h-100">
+            <div class="feature-icon">🔎</div>
+            <h5>Search smarter</h5>
+            <p class="text-muted mb-0">Filter roles by keywords, category, and location instantly.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="feature-card h-100">
+            <div class="feature-icon">⚙️</div>
+            <h5>Stay organized</h5>
+            <p class="text-muted mb-0">Track your applications and manage postings from one dashboard.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="feature-card h-100">
+            <div class="feature-icon">✨</div>
+            <h5>Elegant experience</h5>
+            <p class="text-muted mb-0">Enjoy a more modern, polished interface designed for smooth navigation.</p>
+        </div>
+    </div>
+</section>
+
+<section class="reveal">
+    <div class="section-heading">
+        <h2>Latest opportunities</h2>
+        <a href="/search" class="btn btn-outline-primary btn-sm">View all</a>
+    </div>
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="job-badge">{{ job.category or 'Open Role' }}</span>
+                        <span class="meta-row">{{ job.location }}</span>
+                    </div>
+                    <h5 class="card-title fw-bold">{{ job.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                    <p class="card-text">{{ job.description[:120] }}{% if job.description|length > 120 %}...{% endif %}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <a href="/search" class="btn btn-outline-primary btn-sm">Explore role</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state">No jobs available yet. Check back soon.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

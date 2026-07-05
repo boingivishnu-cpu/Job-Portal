@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row g-4 reveal">
+    <div class="col-lg-4">
+        <div class="card glass-card border-0 p-4 h-100">
+            <h3 class="fw-bold mb-2">Find your fit</h3>
+            <p class="text-muted">Search internships and jobs with one simple query.</p>
+            <form method="GET" action="/search" class="mt-3">
+                <div class="mb-3">
+                    <input type="text" name="q" class="form-control" placeholder="Try: Python, Marketing, Remote" value="{{ query }}">
+                </div>
+                <button class="btn btn-primary w-100" type="submit">Search</button>
+            </form>
+            <div class="mt-4 small text-muted">
+                <div class="fw-semibold mb-2">Popular searches</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="job-badge">Remote</span>
+                    <span class="job-badge">Internship</span>
+                    <span class="job-badge">Design</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="section-heading mb-3">
+            <div>
+                <h2 class="mb-1">Explore opportunities</h2>
+                <p class="text-muted mb-0">Showing {{ jobs|length }} result(s)</p>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="job-badge">{{ job.category or 'Open Role' }}</span>
+                            <span class="meta-row">{{ job.location }}</span>
+                        </div>
+                        <h5 class="card-title fw-bold">{{ job.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                        <p class="card-text">{{ job.description[:180] }}{% if job.description|length > 180 %}...{% endif %}</p>
+                        {% if job.salary %}<p class="fw-bold mb-0">Salary: {{ job.salary }}</p>{% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        {% if job.application_link %}
+                        <p class="small text-muted mb-2">External application: <a href="{{ job.application_link }}" target="_blank" rel="noopener noreferrer">Open link</a></p>
+                        {% endif %}
+                        {% if job.application_email %}
+                        <p class="small text-muted mb-2">Email: {{ job.application_email }}</p>
+                        {% endif %}
+                        {% if current_user and current_user.role == 'Job Seeker' %}
+                        <form method="POST" action="{{ url_for('apply_job', job_id=job.id) }}">
+                            <button class="btn btn-success">Apply Now</button>
+                        </form>
+                        {% elif current_user %}
+                        <span class="text-muted">Employers and admins cannot apply.</span>
+                        {% else %}
+                        <a href="/login" class="btn btn-outline-primary">Login to Apply</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="empty-state">No jobs matched your search.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

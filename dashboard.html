@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Dashboard</h2>
+        <p class="text-muted mb-0">Welcome, {{ user.name }}!</p>
+    </div>
+    {% if current_user and current_user.role in ['Employer', 'Admin'] %}
+    <a href="/post-job" class="btn btn-primary">Post a Job</a>
+    {% endif %}
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted">Your Role</h6>
+                <h4>{{ user.role }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted">Posted Jobs</h6>
+                <h4>{{ posted_jobs|length }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted">Applications</h6>
+                <h4>{{ applications|length }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user and current_user.role in ['Employer', 'Admin'] %}
+<h3 class="mb-3">Your Posted Jobs</h3>
+<div class="row">
+    {% for job in posted_jobs %}
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5>{{ job.title }}</h5>
+                <p class="text-muted mb-2">{{ job.company }} · {{ job.location }}</p>
+                <p>{{ job.description[:140] }}{% if job.description|length > 140 %}...{% endif %}</p>
+                <div class="d-flex gap-2">
+                    <a href="/edit-job/{{ job.id }}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    <a href="/delete-job/{{ job.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">No jobs posted yet.</div></div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if current_user and current_user.role == 'Job Seeker' %}
+<h3 class="mb-3">Your Applications</h3>
+<div class="row">
+    {% for app in applications %}
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5>{{ app.title }}</h5>
+                <p class="text-muted mb-2">{{ app.company }}</p>
+                <span class="badge bg-info">{{ app.status }}</span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">You have not applied to any jobs yet.</div></div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
